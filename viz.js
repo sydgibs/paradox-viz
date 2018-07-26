@@ -35,7 +35,7 @@ init();
 animate();
 
 function init() {
-
+    
     cayley_orientation = new THREE.Quaternion();
 
     camera = new THREE.PerspectiveCamera( 80, SCREEN_WIDTH / SCREEN_HEIGHT, 1, 3000 );
@@ -46,34 +46,25 @@ function init() {
     var i, line, vertex1, vertex2, material;
 
     var geometry = new THREE.SphereGeometry( 1, 32, 32 );
-    var cursor_geometry = new THREE.BufferGeometry();
-    var cursor_vertices = new Float32Array([
-	0.11, -1.0, 1.0,
-	0.11, -1.0, -1.0,
-	0.11, 1.0, 0
-    ]);
-    cursor_geometry.addAttribute( 'position', new THREE.BufferAttribute( cursor_vertices, 3 ) );
+    var cursor_geometry = new THREE.CircleGeometry(1, 32);
 
-    red_material = new THREE.MeshBasicMaterial( { color: 0xf32b11 } );
-    cursor_material = new THREE.MeshBasicMaterial( { color: 0x0fff0f } );
+    sphere_material = new THREE.MeshBasicMaterial( { color: 0x81BCD3 } );
+    cursor_material = new THREE.MeshBasicMaterial( { color: 0xBC2044 } );
 
-    red_mesh = new THREE.Mesh( geometry, red_material );
+    sphere_mesh = new THREE.Mesh( geometry, sphere_material );
 
-    red_mesh.position.x = 0;
-    red_mesh.scale.x = red_mesh.scale.y = red_mesh.scale.z = sphere_radius;
-    scene.add( red_mesh );
+    sphere_mesh.position.x = 0;
+    sphere_mesh.scale.x = sphere_mesh.scale.y = sphere_mesh.scale.z = sphere_radius;
+    scene.add( sphere_mesh );
 
     cursor_mesh = new THREE.Mesh( cursor_geometry, cursor_material );
     cursor_mesh.position.x = paint_point.x;
     cursor_mesh.position.y = paint_point.y;
     cursor_mesh.position.z = paint_point.z;
-    cursor_mesh.scale.x = cursor_mesh.scale.y = cursor_mesh.scale.z = 0.8;
+    cursor_mesh.scale.x = cursor_mesh.scale.y = cursor_mesh.scale.z = 0.75;
+    cursor_mesh.rotation.y = Math.PI / 2;
     cursor_pivot.add(cursor_mesh);
     scene.add( cursor_pivot );
-
-    //scene.add( meshLineBetween( new THREE.Vector3(15, 15, 15), new THREE.Vector3(15, -15, 15) ) );
-    //scene.add( meshLineBetween( new THREE.Vector3(10, 0, 0), new THREE.Vector3(8, 0, -6) ) );
-    //scene.add( meshLineBetween( new THREE.Vector3(-10, 0, 0), new THREE.Vector3(0, 7, 7) ) );
 
     renderer = new THREE.WebGLRenderer( { antialias: true } );
     renderer.setPixelRatio( window.devicePixelRatio );
@@ -92,7 +83,7 @@ function init() {
 }
 
 function meshLineBetween(start_point, end_point) {
-    grey_material = new THREE.MeshBasicMaterial( { color: 0xbbbbbb } );
+    grey_material = new THREE.MeshBasicMaterial( { color: 0x618C59 } );
     grey_material.side = THREE.DoubleSide;
     var radius = start_point.length();
     var start_dir = start_point.normalize();
@@ -163,7 +154,6 @@ function onDocumentMouseMove( event ) {
 	    phi = -(Math.PI / 2);
 	}
     }
-    /*document.getElementById("debug").innerHTML = ("Phi/pi: " + (phi/Math.PI) + " Theta/pi: " + (theta/Math.PI));*/
 }
 
 function onDocumentMouseDown( event ) {
@@ -220,7 +210,7 @@ function refreshCursorTransformation() {
     cursor_pivot.setRotationFromQuaternion( cayley_orientation );
 }
 
-// TODO make touches work the same as mouse drags
+// TODO: make touches work the same as mouse drags
 // or use https://github.com/mrdoob/three.js/blob/master/examples/js/controls/OrbitControls.js
 // or trackball controls.
 function onDocumentTouchStart( event ) {
