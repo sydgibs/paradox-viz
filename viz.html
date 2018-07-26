@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>sydney's gr8 web page</title>
+		<title>Paradox and Infinity: Cayley Spheres</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<style>
@@ -11,19 +11,30 @@
 				overflow: hidden;
 			}
 
-			a {
-				color:#0078ff;
-			}
-
-			#info {
+			#info, #path-display, #function-display {
 				position: absolute;
-				top: 10px; width: 100%;
 				color: #ffffff;
 				padding: 5px;
 				font-family: Monospace;
 				font-size: 13px;
 				text-align: center;
 				z-index:100;
+			}
+
+			#info {
+			        top: 10px; width: 100%;
+			}
+			
+			#path-display {
+			        top: 40px; width: 100%;
+			        text-align: left;
+			        margin-left: 25px;
+			}
+			
+			#function-display {
+			        top: 80px; width: 100%;
+			        text-align: left;
+			        margin-left: 25px;
 			}
 
 			a {
@@ -37,12 +48,14 @@
 
 		</style>
 	</head>
+	
 	<body>
-
 		<div id="info">
 			Source code for this demo is available at: <a href="http://github.com/sydgibs" target="_blank" rel="noopener"> http://github.com/sydgibs </a>
 		</div>
-		<div id="debug"></div>
+		
+		<div id="path-display"></div>
+		<div id="function-display"></div>
 
 		<script src="./three.min.js"></script>
 		<script src="./Detector.js"></script>

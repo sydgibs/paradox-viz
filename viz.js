@@ -16,15 +16,27 @@ var SCREEN_WIDTH = window.innerWidth,
     initial_mouseX, initial_mouseY,
     phi = 0, theta = 0,
 
-    camera_radius = 100,
+    /* cayley state */
+    sphere_radius = 10,
+    cayley_orientation,
+    paint_point = new THREE.Vector3( sphere_radius * 1.01, 0, 0 ),
+    paint_up_axis = new THREE.Vector3( 0, 1, 0 ),
+    paint_right_axis = new THREE.Vector3( 0, 0, 1 ),
+    paint_angle = Math.acos(1/3),
+    cursor_pivot = new THREE.Object3D(),
+
+    cayley_path = [],
+
+    camera_radius = 50,
 
     camera, scene, renderer;
-
 
 init();
 animate();
 
 function init() {
+
+    cayley_orientation = new THREE.Quaternion();
 
     camera = new THREE.PerspectiveCamera( 80, SCREEN_WIDTH / SCREEN_HEIGHT, 1, 3000 );
     camera.position.z = 100;
@@ -33,35 +45,35 @@ function init() {
 
     var i, line, vertex1, vertex2, material;
 
-    var geometry = new THREE.SphereGeometry( 5, 32, 32 );
+    var geometry = new THREE.SphereGeometry( 1, 32, 32 );
+    var cursor_geometry = new THREE.BufferGeometry();
+    var cursor_vertices = new Float32Array([
+	0.11, -1.0, 1.0,
+	0.11, -1.0, -1.0,
+	0.11, 1.0, 0
+    ]);
+    cursor_geometry.addAttribute( 'position', new THREE.BufferAttribute( cursor_vertices, 3 ) );
 
     red_material = new THREE.MeshBasicMaterial( { color: 0xf32b11 } );
-    blue_material = new THREE.MeshBasicMaterial( { color: 0x3540f1 } );
-    green_material = new THREE.MeshBasicMaterial( { color: 0x10e265 } );
-    cyan_material = new THREE.MeshBasicMaterial( { color: 0x10f2e2 } );
+    cursor_material = new THREE.MeshBasicMaterial( { color: 0x0fff0f } );
 
     red_mesh = new THREE.Mesh( geometry, red_material );
-    blue_mesh = new THREE.Mesh( geometry, blue_material );
-    green_mesh = new THREE.Mesh( geometry, green_material );
-    cyan_mesh = new THREE.Mesh( geometry, cyan_material );
-    blue_mesh.scale.x = blue_mesh.scale.y = blue_mesh.scale.z = 0.5;
-    green_mesh.scale.x = green_mesh.scale.y = green_mesh.scale.z = 0.5;
-    cyan_mesh.scale.x = cyan_mesh.scale.y = cyan_mesh.scale.z = 0.5;
 
-    blue_mesh.position.x = 10;
-    green_mesh.position.y = 10;
-    cyan_mesh.position.z = 10;
-    //mesh.userData.originalScale = p[ 0 ];
-    //mesh.rotation.y = Math.random() * Math.PI;
-    //mesh.updateMatrix();
+    red_mesh.position.x = 0;
+    red_mesh.scale.x = red_mesh.scale.y = red_mesh.scale.z = sphere_radius;
     scene.add( red_mesh );
-    scene.add( blue_mesh );
-    scene.add( green_mesh );
-    scene.add( cyan_mesh );
 
-    scene.add( meshLineBetween( new THREE.Vector3(15, 15, 15), new THREE.Vector3(15, -15, 15) ) );
-    scene.add( meshLineBetween( new THREE.Vector3(10, 0, 0), new THREE.Vector3(8, 0, -6) ) );
-    scene.add( meshLineBetween( new THREE.Vector3(-10, 0, 0), new THREE.Vector3(0, 7, 7) ) );
+    cursor_mesh = new THREE.Mesh( cursor_geometry, cursor_material );
+    cursor_mesh.position.x = paint_point.x;
+    cursor_mesh.position.y = paint_point.y;
+    cursor_mesh.position.z = paint_point.z;
+    cursor_mesh.scale.x = cursor_mesh.scale.y = cursor_mesh.scale.z = 0.8;
+    cursor_pivot.add(cursor_mesh);
+    scene.add( cursor_pivot );
+
+    //scene.add( meshLineBetween( new THREE.Vector3(15, 15, 15), new THREE.Vector3(15, -15, 15) ) );
+    //scene.add( meshLineBetween( new THREE.Vector3(10, 0, 0), new THREE.Vector3(8, 0, -6) ) );
+    //scene.add( meshLineBetween( new THREE.Vector3(-10, 0, 0), new THREE.Vector3(0, 7, 7) ) );
 
     renderer = new THREE.WebGLRenderer( { antialias: true } );
     renderer.setPixelRatio( window.devicePixelRatio );
@@ -73,8 +85,10 @@ function init() {
     document.addEventListener( 'mouseup', onDocumentMouseUp, false );
     document.addEventListener( 'touchstart', onDocumentTouchStart, false );
     document.addEventListener( 'touchmove', onDocumentTouchMove, false );
+    document.addEventListener( 'keydown', onDocumentKeyDown, false );
 
     window.addEventListener( 'resize', onWindowResize, false );
+
 }
 
 function meshLineBetween(start_point, end_point) {
@@ -83,7 +97,7 @@ function meshLineBetween(start_point, end_point) {
     var radius = start_point.length();
     var start_dir = start_point.normalize();
     var end_dir = end_point.normalize();
-    geometry = createArcStripGeometry(start_dir, end_dir, 100 /* segments */, radius, 0.5 /* width */);
+    geometry = createArcStripGeometry(start_dir, end_dir, 100 /* segments */, radius, 0.3 /* width */);
     magic_line_mesh = new THREE.Mesh( geometry, grey_material );
     magic_line_mesh.setDrawMode( THREE.TriangleStripDrawMode );
     return magic_line_mesh;
@@ -119,7 +133,6 @@ function createArcStripGeometry(start_dir, end_dir, num_segments, radius, line_w
 	perpendicular_width.multiplyScalar(-1);
     }
 
-
     geometry.addAttribute('position', new THREE.Float32BufferAttribute( vertices, 3 ) );
 
     return geometry;
@@ -134,7 +147,6 @@ function onWindowResize() {
     camera.updateProjectionMatrix();
 
     renderer.setSize( window.innerWidth, window.innerHeight );
-
 }
 
 function onDocumentMouseMove( event ) {
@@ -151,7 +163,7 @@ function onDocumentMouseMove( event ) {
 	    phi = -(Math.PI / 2);
 	}
     }
-    document.getElementById("debug").innerHTML = ("Phi/pi: " + (phi/Math.PI) + " Theta/pi: " + (theta/Math.PI));
+    /*document.getElementById("debug").innerHTML = ("Phi/pi: " + (phi/Math.PI) + " Theta/pi: " + (theta/Math.PI));*/
 }
 
 function onDocumentMouseDown( event ) {
@@ -161,13 +173,51 @@ function onDocumentMouseDown( event ) {
     initial_mouseX = mouseX;
     initial_mouseY = mouseY;
     dragging = true;
-
 }
 
 function onDocumentMouseUp( event ) {
 
     dragging = false;
+}
 
+function onDocumentKeyDown( event ) {
+    if ( event.key === "ArrowLeft" && cayley_path[0] !== "R") {
+	var quaternion = new THREE.Quaternion();
+	cayleyAdvance( quaternion.setFromAxisAngle( paint_up_axis, -paint_angle ) );
+	logStep("L");
+    } else if ( event.key === "ArrowRight" && cayley_path[0] !== "L") {
+	var quaternion = new THREE.Quaternion();
+	cayleyAdvance( quaternion.setFromAxisAngle( paint_up_axis, paint_angle ) );
+	logStep("R");
+    } else if ( event.key === "ArrowUp" && cayley_path[0] !== "D") {
+	var quaternion = new THREE.Quaternion();
+	cayleyAdvance( quaternion.setFromAxisAngle( paint_right_axis, paint_angle ) );
+	logStep("U");
+    } else if ( event.key === "ArrowDown" && cayley_path[0] !== "U") {
+	var quaternion = new THREE.Quaternion();
+	cayleyAdvance( quaternion.setFromAxisAngle( paint_right_axis, -paint_angle ) );
+	logStep("D");
+    }
+}
+
+// rotate the sphere and add a new line
+function cayleyAdvance( quat ) {
+    var cur = paint_point.clone().applyQuaternion( cayley_orientation );
+    cayley_orientation.premultiply( quat );
+    var next = paint_point.clone().applyQuaternion( cayley_orientation );
+    scene.add( meshLineBetween( cur, next ) );
+    refreshCursorTransformation();
+}
+
+function logStep( step ) {
+    cayley_path.unshift(step);
+    document.getElementById("path-display").innerHTML = "Cayley Path: <br> &lt;" + cayley_path.join(", ") + "&gt;";
+    document.getElementById("function-display").innerHTML = "Cayley Function: <br>" + cayley_path.map(x => x.toLowerCase() + "(").join("") + "c" + ")".repeat(cayley_path.length);
+
+}
+
+function refreshCursorTransformation() {
+    cursor_pivot.setRotationFromQuaternion( cayley_orientation );
 }
 
 // TODO make touches work the same as mouse drags
@@ -181,9 +231,7 @@ function onDocumentTouchStart( event ) {
 
 	mouseX = event.touches[ 0 ].pageX - windowHalfX;
 	mouseY = event.touches[ 0 ].pageY - windowHalfY;
-
     }
-
 }
 
 function onDocumentTouchMove( event ) {
@@ -194,17 +242,13 @@ function onDocumentTouchMove( event ) {
 
 	mouseX = event.touches[ 0 ].pageX - windowHalfX;
 	mouseY = event.touches[ 0 ].pageY - windowHalfY;
-
     }
-
 }
 
 function animate() {
 
     requestAnimationFrame( animate );
-
     render();
-
 }
 
 function render() {
