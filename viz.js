@@ -48,7 +48,7 @@ function init() {
     var geometry = new THREE.SphereGeometry( 1, 32, 32 );
     var cursor_geometry = new THREE.CircleGeometry(1, 32);
 
-    sphere_material = new THREE.MeshBasicMaterial( { color: 0x60a3bc } );
+    sphere_material = new THREE.MeshBasicMaterial( { color: 0x6EABC2 } );
     cursor_material = new THREE.MeshBasicMaterial( { color: 0xd63031 } );
 
     sphere_mesh = new THREE.Mesh( geometry, sphere_material );
@@ -61,7 +61,7 @@ function init() {
     cursor_mesh.position.x = paint_point.x;
     cursor_mesh.position.y = paint_point.y;
     cursor_mesh.position.z = paint_point.z;
-    cursor_mesh.scale.x = cursor_mesh.scale.y = cursor_mesh.scale.z = 0.75;
+    cursor_mesh.scale.x = cursor_mesh.scale.y = cursor_mesh.scale.z = 0.70;
     cursor_mesh.rotation.y = Math.PI / 2;
     cursor_pivot.add(cursor_mesh);
     scene.add( cursor_pivot );
@@ -83,7 +83,7 @@ function init() {
 }
 
 function meshLineBetween(start_point, end_point) {
-    grey_material = new THREE.MeshBasicMaterial( { color: 0x218c74 } );
+    grey_material = new THREE.MeshBasicMaterial( { color: 0x237271 } );
     grey_material.side = THREE.DoubleSide;
     var radius = start_point.length();
     var start_dir = start_point.normalize();
