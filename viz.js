@@ -172,19 +172,19 @@ function onDocumentMouseUp( event ) {
 }
 
 function onDocumentKeyDown( event ) {
-    if ( event.key === "ArrowLeft" && cayley_path[0] !== "R") {
+    if ( event.key === "ArrowLeft" && cayley_fn[0] !== "R") {
 	var quaternion = new THREE.Quaternion();
 	cayleyAdvance( quaternion.setFromAxisAngle( paint_up_axis, -paint_angle ) );
 	logStep("L");
-    } else if ( event.key === "ArrowRight" && cayley_path[0] !== "L") {
+    } else if ( event.key === "ArrowRight" && cayley_fn[0] !== "L") {
 	var quaternion = new THREE.Quaternion();
 	cayleyAdvance( quaternion.setFromAxisAngle( paint_up_axis, paint_angle ) );
 	logStep("R");
-    } else if ( event.key === "ArrowUp" && cayley_path[0] !== "D") {
+    } else if ( event.key === "ArrowUp" && cayley_fn[0] !== "D") {
 	var quaternion = new THREE.Quaternion();
 	cayleyAdvance( quaternion.setFromAxisAngle( paint_right_axis, paint_angle ) );
 	logStep("U");
-    } else if ( event.key === "ArrowDown" && cayley_path[0] !== "U") {
+    } else if ( event.key === "ArrowDown" && cayley_fn[0] !== "U") {
 	var quaternion = new THREE.Quaternion();
 	cayleyAdvance( quaternion.setFromAxisAngle( paint_right_axis, -paint_angle ) );
 	logStep("D");
