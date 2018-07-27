@@ -48,8 +48,8 @@ function init() {
     var geometry = new THREE.SphereGeometry( 1, 32, 32 );
     var cursor_geometry = new THREE.CircleGeometry(1, 32);
 
-    sphere_material = new THREE.MeshBasicMaterial( { color: 0x81BCD3 } );
-    cursor_material = new THREE.MeshBasicMaterial( { color: 0xBC2044 } );
+    sphere_material = new THREE.MeshBasicMaterial( { color: 0x60a3bc } );
+    cursor_material = new THREE.MeshBasicMaterial( { color: 0xd63031 } );
 
     sphere_mesh = new THREE.Mesh( geometry, sphere_material );
 
@@ -69,6 +69,7 @@ function init() {
     renderer = new THREE.WebGLRenderer( { antialias: true } );
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( SCREEN_WIDTH, SCREEN_HEIGHT );
+    renderer.setClearColor(0x171717, 1.0);
     document.body.appendChild( renderer.domElement );
 
     document.addEventListener( 'mousemove', onDocumentMouseMove, false );
@@ -79,11 +80,10 @@ function init() {
     document.addEventListener( 'keydown', onDocumentKeyDown, false );
 
     window.addEventListener( 'resize', onWindowResize, false );
-
 }
 
 function meshLineBetween(start_point, end_point) {
-    grey_material = new THREE.MeshBasicMaterial( { color: 0x618C59 } );
+    grey_material = new THREE.MeshBasicMaterial( { color: 0x218c74 } );
     grey_material.side = THREE.DoubleSide;
     var radius = start_point.length();
     var start_dir = start_point.normalize();
