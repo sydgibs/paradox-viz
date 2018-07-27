@@ -26,6 +26,7 @@ var SCREEN_WIDTH = window.innerWidth,
     cursor_pivot = new THREE.Object3D(),
 
     cayley_path = [],
+    cayley_fn = [],
 
     camera_radius = 50,
 
@@ -200,9 +201,11 @@ function cayleyAdvance( quat ) {
 }
 
 function logStep( step ) {
-    cayley_path.unshift(step);
+    cayley_path.push(step);
+    cayley_fn.unshift(step);
+    
     document.getElementById("path-display").innerHTML = "Cayley Path: <br> &lt;" + cayley_path.join(", ") + "&gt;";
-    document.getElementById("function-display").innerHTML = "Cayley Function: <br>" + cayley_path.map(x => x.toLowerCase() + "(").join("") + "c" + ")".repeat(cayley_path.length);
+    document.getElementById("function-display").innerHTML = "Cayley Function: <br>" + cayley_fn.map(x => x.toLowerCase() + "(").join("") + "c" + ")".repeat(cayley_fn.length);
 
 }
 
