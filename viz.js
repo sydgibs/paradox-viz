@@ -48,12 +48,29 @@ function init() {
 
     var geometry = new THREE.SphereGeometry( 1, 32, 32 );
     var cursor_geometry = new THREE.CircleGeometry(1, 32);
+    var x_geometry = new THREE.Geometry();
+    x_geometry.vertices.push(
+	new THREE.Vector3( 25, 0, 0 ),
+	new THREE.Vector3( -25, 0, 0 )
+    );
+    var y_geometry = new THREE.Geometry();
+    y_geometry.vertices.push(
+	new THREE.Vector3( 0, 25, 0 ),
+	new THREE.Vector3( 0, -25, 0 )
+    );
+    var z_geometry = new THREE.Geometry();
+    z_geometry.vertices.push(
+	new THREE.Vector3( 0, 0, 25 ),
+	new THREE.Vector3( 0, 0, -25 )
+    );
 
     sphere_material = new THREE.MeshBasicMaterial( { color: 0x6EABC2 } );
     cursor_material = new THREE.MeshBasicMaterial( { color: 0xd63031 } );
+    x_material = new THREE.LineBasicMaterial( { color: 0xffffff } );
+    y_material = new THREE.LineBasicMaterial( { color: 0xffffff } );
+    z_material = new THREE.LineBasicMaterial( { color: 0xffffff } );
 
     sphere_mesh = new THREE.Mesh( geometry, sphere_material );
-
     sphere_mesh.position.x = 0;
     sphere_mesh.scale.x = sphere_mesh.scale.y = sphere_mesh.scale.z = sphere_radius;
     scene.add( sphere_mesh );
@@ -66,6 +83,13 @@ function init() {
     cursor_mesh.rotation.y = Math.PI / 2;
     cursor_pivot.add(cursor_mesh);
     scene.add( cursor_pivot );
+
+    x_axis = new THREE.Line( x_geometry, x_material );
+    y_axis = new THREE.Line( y_geometry, y_material );
+    z_axis = new THREE.Line( z_geometry, z_material );
+    scene.add( x_axis );
+    scene.add( y_axis );
+    scene.add( z_axis );
 
     renderer = new THREE.WebGLRenderer( { antialias: true } );
     renderer.setPixelRatio( window.devicePixelRatio );
