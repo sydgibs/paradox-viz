@@ -3,7 +3,8 @@
 	<head>
 		<title>Paradox and Infinity: Cayley Spheres</title>
 		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<meta name="viewport"
+		      content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<style>
 			body {
 				background-color: #000;
@@ -11,7 +12,7 @@
 				overflow: hidden;
 			}
 
-			#info, #path-display, #function-display {
+			#info, #path-display, #function-display, #x, #y, #z, #nx, #ny, #nz {
 				position: absolute;
 				color: #ffffff;
 				padding: 5px;
@@ -19,6 +20,10 @@
 				font-size: 12px;
 				text-align: center;
 				z-index:100;
+			}
+
+			#x, #y, #z, #nx, #ny, #nz {
+			        padding: 0px;
 			}
 
 			#info {
@@ -37,6 +42,14 @@
 			        margin-left: 35px;
 			}
 
+			#button {
+				position: absolute;
+				padding: 5px;
+				bottom: 8%;
+				width: 100%;
+				text-align: center;
+			}
+
 			a {
 				color: #d63031;
 				text-decoration: none;
@@ -51,12 +64,30 @@
 	
 	<body>
 		<div id="info">
-			Source code for this demo is available at: <a href="http://github.com/sydgibs" target="_blank" rel="noopener"> http://github.com/sydgibs </a>
+		  Source code for this demo is available at:
+		  <a href="http://github.com/sydgibs"
+		     target="_blank"
+		     rel="noopener">
+		     http://github.com/sydgibs </a>
 		</div>
 		
 		<div id="path-display"></div>
 		<div id="function-display"></div>
 
+		<div id="button">
+		    <button type="button" onclick="processArrow('ArrowLeft');">◀</button>
+		    <button type="button" onclick="processArrow('ArrowDown');">▼</button>
+		    <button type="button" onclick="processArrow('ArrowUp');">▲</button>
+		    <button type="button" onclick="processArrow('ArrowRight');">▶</button>
+		</div>
+
+		<div id="x">x</div>
+		<div id="y">y</div>
+		<div id="z">z</div>
+		<div id="nx">-x</div>
+		<div id="ny">-y</div>
+		<div id="nz">-z</div>
+		
 		<script src="./three.min.js"></script>
 		<script src="./Detector.js"></script>
 		<script src="./viz.js"></script>

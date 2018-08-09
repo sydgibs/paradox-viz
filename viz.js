@@ -66,9 +66,9 @@ function init() {
 
     sphere_material = new THREE.MeshBasicMaterial( { color: 0x6EABC2 } );
     cursor_material = new THREE.MeshBasicMaterial( { color: 0xd63031 } );
-    x_material = new THREE.LineBasicMaterial( { color: 0xffffff } );
-    y_material = new THREE.LineBasicMaterial( { color: 0xffffff } );
-    z_material = new THREE.LineBasicMaterial( { color: 0xffffff } );
+    x_material = new THREE.LineDashedMaterial( { color: 0xffffff } );
+    y_material = new THREE.LineDashedMaterial( { color: 0xffffff } );
+    z_material = new THREE.LineDashedMaterial( { color: 0xffffff } );
 
     sphere_mesh = new THREE.Mesh( geometry, sphere_material );
     sphere_mesh.position.x = 0;
@@ -196,19 +196,25 @@ function onDocumentMouseUp( event ) {
 }
 
 function onDocumentKeyDown( event ) {
-    if ( event.key === "ArrowLeft" && cayley_fn[0] !== "R") {
+
+    processArrow( event.key );
+}
+
+function processArrow( arrow_name ) {
+    
+    if ( arrow_name === "ArrowLeft" && cayley_fn[0] !== "R") {
 	var quaternion = new THREE.Quaternion();
 	cayleyAdvance( quaternion.setFromAxisAngle( paint_up_axis, -paint_angle ) );
 	logStep("L");
-    } else if ( event.key === "ArrowRight" && cayley_fn[0] !== "L") {
+    } else if ( arrow_name === "ArrowRight" && cayley_fn[0] !== "L") {
 	var quaternion = new THREE.Quaternion();
 	cayleyAdvance( quaternion.setFromAxisAngle( paint_up_axis, paint_angle ) );
 	logStep("R");
-    } else if ( event.key === "ArrowUp" && cayley_fn[0] !== "D") {
+    } else if ( arrow_name === "ArrowUp" && cayley_fn[0] !== "D") {
 	var quaternion = new THREE.Quaternion();
 	cayleyAdvance( quaternion.setFromAxisAngle( paint_right_axis, paint_angle ) );
 	logStep("U");
-    } else if ( event.key === "ArrowDown" && cayley_fn[0] !== "U") {
+    } else if ( arrow_name === "ArrowDown" && cayley_fn[0] !== "U") {
 	var quaternion = new THREE.Quaternion();
 	cayleyAdvance( quaternion.setFromAxisAngle( paint_right_axis, -paint_angle ) );
 	logStep("D");
@@ -217,6 +223,7 @@ function onDocumentKeyDown( event ) {
 
 // rotate the sphere and add a new line
 function cayleyAdvance( quat ) {
+
     var cur = paint_point.clone().applyQuaternion( cayley_orientation );
     cayley_orientation.premultiply( quat );
     var next = paint_point.clone().applyQuaternion( cayley_orientation );
