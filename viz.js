@@ -10,6 +10,11 @@ var SCREEN_WIDTH = window.innerWidth,
     windowHalfX = window.innerWidth / 2,
     windowHalfY = window.innerHeight / 2,
 
+    /* axis labels */
+    x_label_div = document.getElementById("x"),
+    y_label_div = document.getElementById("y"),
+    z_label_div = document.getElementById("z"),
+
     /* camera click and drag rotation */
     dragging,
     initial_phi, initial_theta,
@@ -20,8 +25,9 @@ var SCREEN_WIDTH = window.innerWidth,
     sphere_radius = 10,
     cayley_orientation,
     paint_point = new THREE.Vector3( sphere_radius * 1.01, 0, 0 ),
-    paint_up_axis = new THREE.Vector3( 0, 1, 0 ),
-    paint_right_axis = new THREE.Vector3( 0, 0, 1 ),
+    paint_y_axis = new THREE.Vector3( 0, 1, 0 ),
+    paint_z_axis = new THREE.Vector3( 0, 0, 1 ),
+    paint_x_axis = new THREE.Vector3( 1, 0, 0 ),
     paint_angle = Math.acos(1/3),
     cursor_pivot = new THREE.Object3D(),
 
@@ -29,6 +35,7 @@ var SCREEN_WIDTH = window.innerWidth,
     cayley_fn = [],
 
     camera_radius = 50,
+    world_to_screen_matrix = new THREE.Matrix4(),
 
     camera, scene, renderer;
 
@@ -204,19 +211,19 @@ function processArrow( arrow_name ) {
     
     if ( arrow_name === "ArrowLeft" && cayley_fn[0] !== "R") {
 	var quaternion = new THREE.Quaternion();
-	cayleyAdvance( quaternion.setFromAxisAngle( paint_up_axis, -paint_angle ) );
+	cayleyAdvance( quaternion.setFromAxisAngle( paint_y_axis, -paint_angle ) );
 	logStep("L");
     } else if ( arrow_name === "ArrowRight" && cayley_fn[0] !== "L") {
 	var quaternion = new THREE.Quaternion();
-	cayleyAdvance( quaternion.setFromAxisAngle( paint_up_axis, paint_angle ) );
+	cayleyAdvance( quaternion.setFromAxisAngle( paint_y_axis, paint_angle ) );
 	logStep("R");
     } else if ( arrow_name === "ArrowUp" && cayley_fn[0] !== "D") {
 	var quaternion = new THREE.Quaternion();
-	cayleyAdvance( quaternion.setFromAxisAngle( paint_right_axis, paint_angle ) );
+	cayleyAdvance( quaternion.setFromAxisAngle( paint_z_axis, paint_angle ) );
 	logStep("U");
     } else if ( arrow_name === "ArrowDown" && cayley_fn[0] !== "U") {
 	var quaternion = new THREE.Quaternion();
-	cayleyAdvance( quaternion.setFromAxisAngle( paint_right_axis, -paint_angle ) );
+	cayleyAdvance( quaternion.setFromAxisAngle( paint_z_axis, -paint_angle ) );
 	logStep("D");
     }
 }
@@ -333,6 +340,12 @@ function animate() {
     render();
 }
 
+function updateLabelDivPos(div, x, y) {
+    /* x and y are in [-1, 1]. */
+    div.style.left = (50 + 50*x) + "%";
+    div.style.bottom = (50 + 50*y) + "%";
+}
+
 function render() {
 
     r = camera_radius;
@@ -341,6 +354,17 @@ function render() {
     camera.position.y = r * Math.sin(phi);
     camera.position.z = tr * Math.sin(theta);
     camera.lookAt( scene.position );
+    camera.updateProjectionMatrix();
+
+    world_to_screen_matrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+
+    var xlabel = paint_x_axis.clone().multiplyScalar(26).applyMatrix4(world_to_screen_matrix);
+    var ylabel = paint_y_axis.clone().multiplyScalar(26).applyMatrix4(world_to_screen_matrix);
+    var zlabel = paint_z_axis.clone().multiplyScalar(26).applyMatrix4(world_to_screen_matrix);
+
+    updateLabelDivPos(x_label_div, xlabel.x, xlabel.y);
+    updateLabelDivPos(y_label_div, ylabel.x, ylabel.y);
+    updateLabelDivPos(z_label_div, zlabel.x, zlabel.y);
 
     renderer.render( scene, camera );
 }
