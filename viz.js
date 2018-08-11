@@ -42,8 +42,10 @@ var SCREEN_WIDTH = window.innerWidth,
 init();
 animate();
 
-function init() {
-    
+function init_scene() {
+
+    cayley_path = [];
+    cayley_fn = [];
     cayley_orientation = new THREE.Quaternion();
 
     camera = new THREE.PerspectiveCamera( 80, SCREEN_WIDTH / SCREEN_HEIGHT, 1, 3000 );
@@ -57,18 +59,18 @@ function init() {
     var cursor_geometry = new THREE.CircleGeometry(1, 32);
     var x_geometry = new THREE.Geometry();
     x_geometry.vertices.push(
-	new THREE.Vector3( 25, 0, 0 ),
-	new THREE.Vector3( -25, 0, 0 )
+	new THREE.Vector3( 15, 0, 0 ),
+	new THREE.Vector3( -15, 0, 0 )
     );
     var y_geometry = new THREE.Geometry();
     y_geometry.vertices.push(
-	new THREE.Vector3( 0, 25, 0 ),
-	new THREE.Vector3( 0, -25, 0 )
+	new THREE.Vector3( 0, 15, 0 ),
+	new THREE.Vector3( 0, -15, 0 )
     );
     var z_geometry = new THREE.Geometry();
     z_geometry.vertices.push(
-	new THREE.Vector3( 0, 0, 25 ),
-	new THREE.Vector3( 0, 0, -25 )
+	new THREE.Vector3( 0, 0, 15 ),
+	new THREE.Vector3( 0, 0, -15 )
     );
 
     sphere_material = new THREE.MeshBasicMaterial( { color: 0x6EABC2 } );
@@ -98,6 +100,12 @@ function init() {
     scene.add( y_axis );
     scene.add( z_axis );
 
+}
+
+function init() {
+
+    init_scene();
+    
     renderer = new THREE.WebGLRenderer( { antialias: true } );
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( SCREEN_WIDTH, SCREEN_HEIGHT );
@@ -238,14 +246,25 @@ function cayleyAdvance( quat ) {
     refreshCursorTransformation();
 }
 
+function reset( ) {
+
+    init_scene();
+    refreshCursorTransformation();
+    refreshText();
+}
+
 function logStep( step ) {
+    
     cayley_path.push(step);
     cayley_fn.unshift(step);
-    
+    refreshText();
+}
+
+function refreshText( ) {
+
     document.getElementById("path-display").innerHTML = "Cayley Path: <br> &lt;" + cayley_path.join(", ") + "&gt;";
     document.getElementById("function-display").innerHTML = "Cayley Function: <br>" + cayley_fn.map(x => x.toLowerCase() + "(").join("") + "c" + ")".repeat(cayley_fn.length);
-
-}
+} 
 
 function refreshCursorTransformation() {
     cursor_pivot.setRotationFromQuaternion( cayley_orientation );
@@ -358,9 +377,9 @@ function render() {
 
     world_to_screen_matrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
 
-    var xlabel = paint_x_axis.clone().multiplyScalar(26).applyMatrix4(world_to_screen_matrix);
-    var ylabel = paint_y_axis.clone().multiplyScalar(26).applyMatrix4(world_to_screen_matrix);
-    var zlabel = paint_z_axis.clone().multiplyScalar(26).applyMatrix4(world_to_screen_matrix);
+    var xlabel = paint_x_axis.clone().multiplyScalar(16).applyMatrix4(world_to_screen_matrix);
+    var ylabel = paint_y_axis.clone().multiplyScalar(16).applyMatrix4(world_to_screen_matrix);
+    var zlabel = paint_z_axis.clone().multiplyScalar(16).applyMatrix4(world_to_screen_matrix);
 
     updateLabelDivPos(x_label_div, xlabel.x, xlabel.y);
     updateLabelDivPos(y_label_div, ylabel.x, ylabel.y);

@@ -15,8 +15,9 @@
 			#info, #path-display, #function-display, #x, #y, #z {
 				position: absolute;
 				color: #ffffff;
-				padding: 5px;
+			        padding: 5px;
 				font-family: Monospace;
+			        word-wrap: break-word;
 				font-size: 12px;
 				text-align: center;
 				z-index:100;
@@ -31,15 +32,17 @@
 			}
 			
 			#path-display {
-			        top: 40px; width: 100%;
+			        top: 40px; width: 90%;
 			        text-align: left;
-			        margin-left: 35px;
+			        margin-left: 5%;
+			        margin-right: 5%;
 			}
 			
 			#function-display {
-			        top: 100px; width: 100%;
+			        top: 125px; width: 90%;
 			        text-align: left;
-			        margin-left: 35px;
+			        margin-left: 5%;
+			        margin-right: 5%;
 			}
 
 			#button {
@@ -79,6 +82,7 @@
 		    <button type="button" onclick="processArrow('ArrowDown');">▼</button>
 		    <button type="button" onclick="processArrow('ArrowUp');">▲</button>
 		    <button type="button" onclick="processArrow('ArrowRight');">▶</button>
+		    <button type="button" onclick="reset();">Reset</button>
 		</div>
 
 		<div id="x">x</div>
