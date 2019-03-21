@@ -1,3 +1,3 @@
 # paradox-viz
-An interactive visualization of Cayley on a Ball from MIT's Paradox and Infinity Course.
-Currently hosted at: https://sydneygibson.com/paradox-viz/viz.html
+An interactive visualization of a Banach-Tarsky rotations for MIT's Paradox and Infinity Course.
+Currently hosted at: http://web.mit.edu/arayo/www/Cayley/viz.html
